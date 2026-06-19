@@ -1,5 +1,5 @@
 // GANTI DENGAN URL WEB APP DEPLOYMENT ANDA
-const WEB_APP_URL = "URL_WEB_APP_ANDA_DISINI";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyaRgq5Epcv-8SKjMGwrZod4LyiXZH0arro3gu45N1W0yaaHPOINHJTN71DeGTJNLhLfA/exec";
 
 // DATA PEGAWAI (Salinan terstruktur dari Sheet2 'Pegawai')
 // Anda dapat melakukan hardcode objek ini di file js agar tidak terbentur CORS GitHub-to-GoogleAppsScript
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectNama = document.getElementById('selectNama');
     const inputID = document.getElementById('inputID');
     const inputJabatan = document.getElementById('inputJabatan');
+    const inputJobdesk = document.getElementById('inputJobdesk');
     const form = document.getElementById('wfhForm');
     const submitBtn = document.getElementById('submitBtn');
 
@@ -30,9 +31,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (terpilih) {
             inputID.value = terpilih.id;
             inputJabatan.value = terpilih.jabatan;
+            inputJobdesk.value = terpilih.jobdesk;
         } else {
             inputID.value = "";
             inputJabatan.value = "";
+            inputJobDesk.value = "";
         }
     });
 
@@ -124,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
             Nama: selectNama.value,
             id: inputID.value,
             Jabatan: inputJabatan.value,
+            Jobdesk: inputJobdesk.value,
             Latitude: document.getElementById('lat').value,
             Longitude: document.getElementById('lon').value,
             Alamat: document.getElementById('alamat').value,
