@@ -161,3 +161,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+       try {
+            // Buat objek Date untuk waktu sekarang
+            const today = new Date();
+
+            // Opsi format: tampilkan hari, tanggal, bulan, dan tahun
+            const options = {
+                weekday: 'long',   // nama hari lengkap (Senin, Selasa, ...)
+                year: 'numeric',   // tahun lengkap
+                month: 'long',     // nama bulan lengkap
+                day: 'numeric'     // tanggal
+            };
+
+            // Format sesuai locale Indonesia
+            const formattedDate = today.toLocaleDateString('id-ID', options);
+
+            // Tampilkan di elemen HTML
+            document.getElementById('tanggal').textContent = formattedDate;
+
+        } catch (error) {
+            console.error("Terjadi kesalahan saat memproses tanggal:", error);
+            document.getElementById('tanggal').textContent = "Gagal memuat tanggal.";
+        }
