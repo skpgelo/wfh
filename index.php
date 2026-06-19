@@ -33,7 +33,7 @@
 
             <div class="form-group">
                 <label for="inputJobdesk">Uraian Kegiatan:</label>
-                <input type="text" id="inputJobdesk" readonly >
+                <input type="text" id="inputJobdesk" required >
             </div>
 
             <!-- Geolocation (Auto-filled) -->
