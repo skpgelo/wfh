@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectNama = document.getElementById('selectNama');
     const inputID = document.getElementById('inputID');
     const inputJabatan = document.getElementById('inputJabatan');
-    const inputJobdesk = document.getElementById('inputJobdesk');
+    const inputPokja = document.getElementById('inputPokja');
     const form = document.getElementById('wfhForm');
     const submitBtn = document.getElementById('submitBtn');
 
@@ -31,11 +31,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (terpilih) {
             inputID.value = terpilih.id;
             inputJabatan.value = terpilih.jabatan;
-            inputJobdesk.value = terpilih.jobdesk;
+            inputPokja.value = terpilih.pokja;
         } else {
             inputID.value = "";
             inputJabatan.value = "";
-            inputJobDesk.value = "";
+            inputPokja.value = "";
         }
     });
 
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
             Nama: selectNama.value,
             id: inputID.value,
             Jabatan: inputJabatan.value,
-            Jobdesk: inputJobdesk.value,
+            Pokja: inputPkja.value,
             Latitude: document.getElementById('lat').value,
             Longitude: document.getElementById('lon').value,
             Alamat: document.getElementById('alamat').value,
