@@ -38,8 +38,12 @@
                             <input type="text" id="inputJabatan" readonly>
                         </div>
                         <div class="mb-3">
+                            <label for="inputPokja">Kelompok Kerja</label>
+                            <input type="text" id="inputPokja" readonly>
+                        </div>
+                        <div class="mb-3">
                             <label for="inputJobdesk">Uraian Kegiatan:</label>
-                            <input type="text" id="inputJobdesk" required>
+                            <textarea rows="5" type="text" id="inputJobdesk" required></textarea>
                         </div>
                     </div>
 
@@ -55,7 +59,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="alamat">Alamat Lokasi:</label>
-                            <textarea id="alamat" readonly placeholder="Mendeteksi alamat koordinat..."></textarea>
+                            <textarea rows="5" id="alamat" readonly placeholder="Mendeteksi alamat koordinat..."></textarea>
                        </div>
                         <div class="mb-3">
                             <label>Gambar 1 (Max 2 File, @2MB):</label>
