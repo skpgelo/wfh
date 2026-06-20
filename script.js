@@ -1,185 +1,184 @@
 // GANTI DENGAN URL WEB APP DEPLOYMENT ANDA
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyaRgq5Epcv-8SKjMGwrZod4LyiXZH0arro3gu45N1W0yaaHPOINHJTN71DeGTJNLhLfA/exec";
 
-// DATA PEGAWAI (Salinan terstruktur dari Sheet2 'Pegawai')
-// Anda dapat melakukan hardcode objek ini di file js agar tidak terbentur CORS GitHub-to-GoogleAppsScript
-const dataPegawai = [
-    { nama: "Budi Santoso", id: "PEG001", jabatan: "Staff IT" },
-    { nama: "Siti Aminah", id: "PEG002", jabatan: "HR Manager" },
-    { nama: "Andi Wijaya", id: "PEG003", jabatan: "Finance Executive" }
-];
+        const gasUrl = 'SALIN_URL_WEB_APP_GAS_ANDA_DI_SINI';
+        let globalData = [];
+        let globalKaryawanMap = {}; 
+        let currentUserEmail = "";
 
-document.addEventListener('DOMContentLoaded', function () {
-    const selectNama = document.getElementById('selectNama');
-    const inputID = document.getElementById('inputID');
-    const inputJabatan = document.getElementById('inputJabatan');
-    const inputPokja = document.getElementById('inputPokja');
-    const form = document.getElementById('wfhForm');
-    const submitBtn = document.getElementById('submitBtn');
-
-    // 1. Inisialisasi Dropdown Nama dari Data Pegawai
-    dataPegawai.forEach(p => {
-        let opt = document.createElement('option');
-        opt.value = p.nama;
-        opt.textContent = p.nama;
-        selectNama.appendChild(opt);
-    });
-
-    // 2. Dropdown Chain Logic
-    selectNama.addEventListener('change', function() {
-        const terpilih = dataPegawai.find(p => p.nama === this.value);
-        if (terpilih) {
-            inputID.value = terpilih.id;
-            inputJabatan.value = terpilih.jabatan;
-            inputPokja.value = terpilih.pokja;
-        } else {
-            inputID.value = "";
-            inputJabatan.value = "";
-            inputPokja.value = "";
-        }
-    });
-
-    // 3. Geolocation & Reverse Geocoding (Tanpa API Key, menggunakan Nominatim OpenStreetMap)
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                document.getElementById('lat').value = lat;
-                document.getElementById('lon').value = lon;
-
-                // Ambil alamat aslinya (Reverse Geocode)
-                fetch(`https://openstreetmap.org{lat}&lon=${lon}`)
-                    .then(res => res.json())
-                    .then(geoData => {
-                        document.getElementById('alamat').value = geoData.display_name || "Alamat ditemukan tanpa nama jalan.";
-                    })
-                    .catch(() => {
-                        document.getElementById('alamat').value = `Berhasil mendapat koordinat (${lat}, ${lon}). Gagal memuat nama jalan.`;
-                    });
-            },
-            (error) => {
-                alert("Gagal memuat lokasi. Pastikan izin GPS aktif.");
-                document.getElementById('alamat').value = "Izin lokasi ditolak/tidak ditemukan.";
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            if (tabId === 'data') {
+                document.querySelector('[onclick="switchTab(\'data\')"]').classList.add('active');
+                document.getElementById('panel-data').classList.add('active');
+            } else if (tabId === 'peta') {
+                document.querySelector('[onclick="switchTab(\'peta\')"]').classList.add('active');
+                document.getElementById('panel-peta').classList.add('active');
             }
-        );
-    }
-
-    // Helper untuk konversi file gambar ke Base64 beserta validasi ukuran & jumlah file
-    async function prosesFileGambar(inputId, infoId) {
-        const input = document.getElementById(inputId);
-        const info = document.getElementById(infoId);
-        const files = input.files;
-        
-        info.textContent = `${files.length} file terpilih`;
-        if (files.length > 2) {
-            alert(`Maksimal hanya boleh mengunggah 2 file pada ${inputId.toUpperCase()}`);
-            input.value = "";
-            info.textContent = "0 file terpilih (Error jumlah)";
-            return null;
         }
 
-        let arrayBase64 = [];
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (file.size > 2 * 1024 * 1024) { // Validasi Ukuran 2MB
-                alert(`File "${file.name}" melebihi ukuran maksimal 2MB!`);
-                input.value = "";
-                info.textContent = "0 file terpilih (Error ukuran)";
-                return null;
+        // VALIDASI JUMLAH FILE DI SISI CLIENT
+        function validateFileCount(input) {
+            if (input.files.length > 2) {
+                alert("⚠️ Maaf, Anda hanya diperbolehkan mengunggah maksimal 2 gambar.");
+                input.value = ""; // Reset pilihan file
             }
-
-            const base64String = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                reader.readAsDataURL(file);
-            });
-
-            arrayBase64.push({
-                base64: base64String,
-                type: file.type
-            });
-        }
-        return arrayBase64;
-    }
-
-    // Event saat formulir dikirim
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Memproses Gambar & Data...";
-
-        // Jalankan pemrosesan file gambar
-        const g1 = await prosesFileGambar('img1', 'info-img1');
-        const g2 = await prosesFileGambar('img2', 'info-img2');
-        const g3 = await prosesFileGambar('img3', 'info-img3');
-
-        // Jika salah satu gagal/tidak lolos validasi, batalkan submit
-        if (g1 === null || g2 === null || g3 === null) {
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Kirim Data WFH";
-            return;
         }
 
-        // Bungkus payload ke JSON object tunggal
-        const payload = {
-            Nama: selectNama.value,
-            id: inputID.value,
-            Jabatan: inputJabatan.value,
-            Pokja: inputPkja.value,
-            Latitude: document.getElementById('lat').value,
-            Longitude: document.getElementById('lon').value,
-            Alamat: document.getElementById('alamat').value,
-            Gambar_1: g1,
-            Gambar_2: g2,
-            Gambar_3: g3
-        };
+        async function loadData() {
+            try {
+                const response = await fetch(gasUrl);
+                const resJson = await response.json();
+                globalData = resJson.tabelUtama;
+                currentUserEmail = resJson.currentUserEmail;
 
-        submitBtn.innerText = "Mengirim ke Google Spreadsheet...";
+                document.getElementById('user-email-display').innerText = `👤 Akun: ${currentUserEmail}`;
 
-        fetch(WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors', // Penting untuk melewati batasan kebijakan CORS redirect Apps Script
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(() => {
-            alert("Data WFH dan Gambar berhasil disimpan ke Spreadsheet & Google Drive!");
-            form.reset();
-            document.getElementById('info-img1').textContent = "0 file terpilih";
-            document.getElementById('info-img2').textContent = "0 file terpilih";
-            document.getElementById('info-img3').textContent = "0 file terpilih";
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Terjadi gangguan pengiriman data.");
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Kirim Data WFH";
-        });
-    });
+                // Susun Dropdown Nama Dinamis dari Sheet3
+                const nameSelect = document.getElementById('input-nama');
+                nameSelect.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
+                
+                resJson.listKaryawan.forEach(item => {
+                    globalKaryawanMap[item.nama] = item.jabatanId; // Petakan nama ke ID jabatan
+                    let opt = document.createElement('option');
+                    opt.value = item.nama;
+                    opt.textContent = item.nama;
+                    nameSelect.appendChild(opt);
+                });
+
+                renderTableHeader();
+                renderTableBody(globalData);
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('data-table').style.display = 'table';
+            } catch (error) {
+                document.getElementById('loading').innerText = 'Gagal memuat basis data.';
+            }
+        }
+
+        function autoFillJabatan() {
+            const selectedNama = document.getElementById('input-nama').value;
+            document.getElementById('input-jabatan').value = globalKaryawanMap[selectedNama] || '';
+        }
+
+function renderTableHeader() {
+if (globalData.length === 0) return;
+const headers = Object.keys(globalData[0]).filter(k => k !== 'rowNumber');
+let headHtml = '';
+headers.forEach(header => { headHtml += <th>${header}</th>; });
+headHtml += 'Action';
+document.getElementById('table-head').innerHTML = headHtml;
+}
+function renderTableBody(dataToRender) {
+const tableBody = document.getElementById('table-body');
+if (dataToRender.length === 0) {
+tableBody.innerHTML = <tr><td colspan="11" class="no-data">Belum ada riwayat terekam.</td></tr>;
+return;
+}
+const headers = Object.keys(globalData[0]).filter(k => k !== 'rowNumber');
+let bodyHtml = '';
+dataToRender.forEach(row => {
+bodyHtml += '';
+headers.forEach(header => {
+let cellValue = row[header] !== undefined ? row[header] : '';
+if (header === 'Tanggal' && cellValue) cellValue = new Date(cellValue).toLocaleDateString('id-ID');
+if (header === 'Link_Gambar' && cellValue) {
+let links = cellValue.split(' , ');
+cellValue = links.map((url, index) => <a href="${url}" target="_blank" style="color:#2ecc71; text-decoration:none; font-weight:bold;">🖼️ Foto ${index+1}</a>).join(' | ');
+}
+if ((header === 'Latitude' || header === 'Longitude') && cellValue) {
+cellValue = <a href="https://google.com{row['Latitude']},${row['Longitude']}" target="_blank" style="color:#3498db; text-decoration:none;">📍 ${cellValue}</a>;
+}
+bodyHtml += <td>${cellValue}</td>;
 });
-       try {
-            // Buat objek Date untuk waktu sekarang
-            const today = new Date();
+let actionCell = '-';
+if (row['Email'] && row['Email'].toString().trim().toLowerCase() === currentUserEmail.trim().toLowerCase()) {
+actionCell = <td><button class="btn-edit" onclick="openEditModal(${row['rowNumber']}, '${escapeHtml(row['Jobdesk'])}')">✏️ Edit</button></td>;
+}
+bodyHtml += actionCell + '';
+});
+tableBody.innerHTML = bodyHtml;
+}
+function escapeHtml(text) { return text ? text.replace(/'/g, "\'").replace(/"/g, """) : ''; }
+function openEditModal(rowNumber, jobdesk) {
+document.getElementById('edit-row-number').value = rowNumber;
+document.getElementById('edit-jobdesk').value = jobdesk;
+document.getElementById('edit-modal').style.display = 'flex';
+}
+function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+// LOGIKA SUBMIT EDIT JOBDESK
+document.getElementById('edit-form').addEventListener('submit', async function(e) {
+e.preventDefault();
+const formData = new URLSearchParams();
+formData.append('action', 'update');
+formData.append('rowNumber', document.getElementById('edit-row-number').value);
+formData.append('Jobdesk', document.getElementById('edit-jobdesk').value);
+try {
+const response = await fetch(gasUrl, { method: 'POST', body: formData });
+const result = await response.json();
+alert(result.message);
+if (result.status === 'success') { closeEditModal(); loadData(); }
+} catch (err) { alert("Gagal memperbarui."); }
+});
+// SUBMIT DATA BARU + FILE TRANSFER KE BASE64
+document.getElementById('karyawan-form').addEventListener('submit', function(e) {
+e.preventDefault();
+const submitBtn = document.getElementById('btn-submit-data');
+submitBtn.disabled = true;
+submitBtn.innerText = "Mengunci Koordinat Lokasi...";
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(
+async function(position) {
+submitBtn.innerText = "Membaca & Memproses Gambar...";
+const fileInput = document.getElementById('input-images');
+const params = new URLSearchParams();
+params.append('Nama', document.getElementById('input-nama').value);
+params.append('Jabatan', document.getElementById('input-jabatan').value);
+params.append('Jobdesk', document.getElementById('input-jobdesk').value);
+params.append('Latitude', position.coords.latitude);
+params.append('Longitude', position.coords.longitude);
+// Ambil teks alamat dari Nominatim
+try {
+const gRes = await fetch(https://openstreetmap.org{position.coords.latitude}&lon=${position.coords.longitude});
+const gData = await gRes.json();
+if(gData.display_name) params.append('Alamat', gData.display_name);
+} catch(e){}
+// Membaca file gambar terpilih (Maksimal 2) dan mengubahnya ke Base64
+let fileReadPromises = [];
+let maxUploadCount = Math.min(fileInput.files.length, 2);
+for (let i = 0; i < maxUploadCount; i++) {
+const file = fileInput.files[i];
+const p = new Promise((resolve) => {
+const reader = new FileReader();
+reader.onload = function(evt) {
+const base64Data = evt.target.result.split(',')[1];
+params.append('file_' + (i + 1), base64Data);
+params.append('file_' + (i + 1) + 'name', file.name);
+params.append('file' + (i + 1) + '_type', file.type);
+resolve();
+};
+reader.readAsDataURL(file);
+});
+fileReadPromises.push(p);
+}
+// Tunggu semua berkas gambar selesai dikonversi ke Base64, lalu kirim ke server
+Promise.all(fileReadPromises).then(async () => {
+submitBtn.innerText = "Mengirim Paket Data...";
+try {
+const response = await fetch(gasUrl, { method: 'POST', body: params });
+const result = await response.json();
+alert(result.message);
+if (result.status === 'success') { document.getElementById('karyawan-form').reset(); loadData(); }
+} catch(err) { alert("Masalah jaringan data."); }
+finally { submitBtn.disabled = false; submitBtn.innerText = "Kirim Data & Kunci GPS"; }
+});
+},
+function() { alert("Akses GPS ditolak."); submitBtn.disabled = false; submitBtn.innerText = "Kirim Data & Kunci GPS"; },
+{ enableHighAccuracy: true, timeout: 10000 }
+);
+}
+});
+document.addEventListener('DOMContentLoaded', loadData);
 
-            // Opsi format: tampilkan hari, tanggal, bulan, dan tahun
-            const options = {
-                weekday: 'long',   // nama hari lengkap (Senin, Selasa, ...)
-                year: 'numeric',   // tahun lengkap
-                month: 'long',     // nama bulan lengkap
-                day: 'numeric'     // tanggal
-            };
 
-            // Format sesuai locale Indonesia
-            const formattedDate = today.toLocaleDateString('id-ID', options);
-
-            // Tampilkan di elemen HTML
-            document.getElementById('tanggal').textContent = formattedDate;
-
-        } catch (error) {
-            console.error("Terjadi kesalahan saat memproses tanggal:", error);
-            document.getElementById('tanggal').textContent = "Gagal memuat tanggal.";
-        }
