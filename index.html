@@ -4,42 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Absensi & Upload Pembatasan Gambar</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        .navbar { background-color: #2c3e50; display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; color: white; }
-        .navbar h2 { margin: 0; font-size: 18px; }
-        .user-info { font-size: 14px; background: #34495e; padding: 5px 12px; border-radius: 4px; color: #2ecc71; font-weight: bold; }
-        .tab-menu { display: flex; gap: 5px; }
-        .tab-btn { background: none; border: none; color: #bdc3c7; padding: 12px 20px; font-size: 15px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; }
-        .tab-btn.active { color: #2ecc71; border-bottom: 3px solid #2ecc71; }
-        .content-container { flex: 1; position: relative; overflow: hidden; }
-        .tab-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: none; padding: 30px; overflow-y: auto; box-sizing: border-box; }
-        .tab-panel.active { display: block; }
-        #panel-peta { padding: 0; }
-        #peta-frame { width: 100%; height: 100%; border: none; }
-        .form-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
-        .form-group label { font-weight: 600; color: #34495e; font-size: 14px; }
-        .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: inherit; }
-        .file-hint { font-size: 12px; color: #e74c3c; font-weight: bold; }
-        .btn-submit { padding: 10px 20px; background-color: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-submit:hover { background-color: #27ae60; }
-        .btn-submit:disabled { background-color: #bdc3c7; cursor: not-allowed; }
-        .table-container { box-shadow: 0 4px 8px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; background: white; margin-top: 15px;}
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 14px 20px; border-bottom: 1px solid #eef2f3; }
-        th { background-color: #34495e; color: white; font-weight: 600; }
-        tr:hover { background-color: #f9fbfb; }
-        #loading { font-size: 16px; color: #7f8c8d; font-style: italic; }
-        .no-data { text-align: center; color: #7f8c8d; padding: 30px; font-style: italic; }
-        .btn-edit { background-color: #f39c12; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        
-        /* Modal Style */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-        .modal-content { background-color: white; padding: 25px; border-radius: 8px; width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-        .btn-close-modal { padding: 8px 15px; background-color: #bdc3c7; border: none; border-radius: 4px; cursor: pointer; }
-    </style>
+ 
 </head>
 <body>
 
