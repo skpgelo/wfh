@@ -1,7 +1,7 @@
 // GANTI DENGAN URL WEB APP DEPLOYMENT ANDA
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyaRgq5Epcv-8SKjMGwrZod4LyiXZH0arro3gu45N1W0yaaHPOINHJTN71DeGTJNLhLfA/exec";
+// const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyaRgq5Epcv-8SKjMGwrZod4LyiXZH0arro3gu45N1W0yaaHPOINHJTN71DeGTJNLhLfA/exec";
 
-        const gasUrl = 'SALIN_URL_WEB_APP_GAS_ANDA_DI_SINI';
+        const gasUrl = 'https://script.google.com/macros/s/AKfycbzkCSMhQuFwSIuKRLFiI-9rylfJHrIELHiRLuzrsr6fTv7MvW9-RhZsDG0PeqH1HqIrNg/exec';
         let globalData = [];
         let globalKaryawanMap = {}; 
         let currentUserEmail = "";
